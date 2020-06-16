@@ -1,4 +1,4 @@
-scalaVersion := "2.12.10"
+scalaVersion := "2.12.11"
 
 //scalaVersion := "2.13.2"
 
@@ -33,7 +33,7 @@ libraryDependencies ++= Seq(
   "org.scalamock" %% "scalamock" % "4.2.0" % Test
 )
 
-
+//mainClass in (Compile, packageBin) := Some("Main")
 
 
 

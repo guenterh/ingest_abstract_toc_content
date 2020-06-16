@@ -1,19 +1,44 @@
-image: java:8
-
 stages:
-  - test
-
-before_script:
-  - apt-get update -y
-  - apt-get install apt-transport-https -y
-  ## Install SBT
-  - echo "deb http://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list
-  - apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823
-  - apt-get update -y
-  - apt-get install sbt -y
-  - sbt sbt-version
+  - test-build
+  - publish-image
 
 test:
-  stage: test
+  stage: test-build
+  except:
+    - master
+    - tags
+  image: hseeberger/scala-sbt:8u252_1.3.12_2.12.11
   script:
-    - sbt clean test assembly 
+    - sbt test compile
+
+.build-image:
+  stage: publish-image
+  image: docker:stable
+  services:
+    - docker:dind
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD"
+    - docker build --pull -t "$IMAGE_TAG" .
+    - docker push "$IMAGE_TAG"
+    - docker logout
+
+build-tagged-image:
+  extends: .build-image
+  variables:
+    IMAGE_TAG: "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
+  only:
+    - tags
+
+build-latest-image:
+  extends: .build-image
+  variables:
+    IMAGE_TAG: "$CI_REGISTRY_IMAGE:latest"
+  only:
+    - master
+
+build-develop-image:
+  extends: .build-image
+  variables:
+    IMAGE_TAG: "$CI_REGISTRY_IMAGE:develop"
+  only:
+    - develop
