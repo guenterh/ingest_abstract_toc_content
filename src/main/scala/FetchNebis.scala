@@ -1,3 +1,4 @@
+import java.net.URL
 import java.util.Date
 
 import db.ctx
@@ -33,13 +34,34 @@ object Main extends App {
 
   import ctx._
 
-  val qu: ctx.Quoted[ctx.EntityQuery[Content]] = quote {
-    query[Content].filter(_.url == "http://opac.nebis.ch/objects/pdf/e65_3-7170-0201-5_01.pdf")
-  }
 
-  val result = ctx.run(qu)
-
-  println(result)
+  dbAccessWrapper.hasPdf("http://opac.nebis.ch/objects/pdf/e65_3-7170-0201-5_01.pdf")
 
 }
+
+object dbAccessWrapper {
+  import ctx._
+
+  def hasPdf(url: String ): Boolean = {
+
+    val u = new URL(url)
+    val ssl = u.getProtocol.toLowerCase.equals("https")
+
+    val qu: ctx.Quoted[ctx.EntityQuery[Content]] = quote {
+      query[Content].filter(_.url == url)
+    }
+    ctx.run(qu).nonEmpty
+  }
+
+}
+
+class ProtocolTest (val url: String) {
+
+  private val protocol = new URL(url).getProtocol
+
+  def relevantProtocol: Boolean = protocol.equalsIgnoreCase("http") ||
+    protocol.equalsIgnoreCase("https")
+
+}
+
 

@@ -1,4 +1,5 @@
 import Dependencies._
+import sbt.Keys.testFrameworks
 
 ThisBuild / scalaVersion := "2.12.11"
 ThisBuild / organization := "org.swissbib"
@@ -21,7 +22,13 @@ lazy val root = (project in file("."))
       "marcxml-fields" at "https://gitlab.com/api/v4/projects/12974592/packages/maven",
       Resolver.mavenLocal
     ),
-    libraryDependencies ++= Seq(
+
+    libraryDependencies += "io.monix" %% "minitest" % "2.8.2" % "test"
+
+      testFrameworks += new TestFramework("minitest.runner.Framework")
+
+
+libraryDependencies ++= Seq(
       iomonixtest % Test,
       mysql,
       quill_core,
@@ -32,4 +39,6 @@ lazy val root = (project in file("."))
       scala_mock
       )
   )
+
+
 

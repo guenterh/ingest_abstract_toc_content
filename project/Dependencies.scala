@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import sbt.Keys.libraryDependencies
 import sbt._
 
 object Dependencies {
@@ -62,6 +63,6 @@ object Dependencies {
   lazy val scala_test = "org.scalatest" %% "scalatest" % "3.0.8" % Test
   lazy val scala_mock = "org.scalamock" %% "scalamock" % "4.2.0" % Test
 
-
+  lazy val minitest = "io.monix" %% "minitest" % "2.8.2" % Test
 
 }
