@@ -23,21 +23,17 @@ lazy val root = (project in file("."))
       Resolver.mavenLocal
     ),
 
-    libraryDependencies += "io.monix" %% "minitest" % "2.8.2" % "test"
-
-      testFrameworks += new TestFramework("minitest.runner.Framework")
-
-
-libraryDependencies ++= Seq(
-      iomonixtest % Test,
-      mysql,
-      quill_core,
-      quill_jdbc,
-      scala_xml,
-      marc_xml_fields,
-      scala_test,
-      scala_mock
-      )
+    libraryDependencies ++= Seq(
+          iomonixtest % Test,
+          mysql,
+          quill_core,
+          quill_jdbc,
+          scala_xml,
+          marc_xml_fields,
+          scala_test,
+          scala_mock,
+          minitest
+          )
   )
 
 
