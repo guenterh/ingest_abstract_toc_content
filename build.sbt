@@ -24,16 +24,17 @@ lazy val root = (project in file("."))
     ),
 
     libraryDependencies ++= Seq(
-          iomonixtest % Test,
-          mysql,
-          quill_core,
-          quill_jdbc,
-          scala_xml,
-          marc_xml_fields,
-          scala_test,
-          scala_mock,
-          minitest
-          )
+      iomonixtest % Test,
+      mysql,
+      quill_core,
+      quill_jdbc,
+      scala_xml,
+      marc_xml_fields,
+      scala_test,
+      scala_mock,
+      minitest
+      //argparser
+      )
   )
 
 

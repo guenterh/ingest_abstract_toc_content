@@ -65,6 +65,7 @@ object Dependencies {
 
   lazy val minitest = "io.monix" %% "minitest" % "2.8.2" % Test
 
-  lazy val argparser =  "com.github.scopt" %% "scopt"
+
+  //lazy val argparser =  "com.github.scopt" %% "scopt" % "v3.7.1"
 
 }

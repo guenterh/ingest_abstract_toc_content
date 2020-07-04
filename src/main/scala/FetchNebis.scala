@@ -1,9 +1,18 @@
+import java.io.{File, FileInputStream, InputStream}
 import java.net.URL
+import java.nio.file.{Files, Paths}
 import java.util.Date
+import java.util.stream.Collectors
+import java.util.zip.GZIPInputStream
 
 import db.ctx
 import io.getquill._
 import io.getquill.context.jdbc.JdbcContext
+import utilities.{MarcXMLHandlersFeatures, Transformators}
+
+import scala.collection.immutable
+import scala.io.Source
+
 
 
 case class Content(id:Long, docid: String, content: String, url:String, date: Date)
@@ -27,6 +36,15 @@ package object db {
 //import db._
 
 object Main extends App {
+
+  fileList.getFileList.forEach( f => {
+
+    val source = fileList.getStream(f)
+    sourceParser.parseSource(source)
+
+  }
+
+  )
 
   dbAccessWrapper.hasPdf("http://opac.nebis.ch/objects/pdf/e65_3-7170-0201-5_01.pdf")
 
@@ -53,6 +71,58 @@ class ProtocolTest (val url: String) {
 
   def relevantProtocol: Boolean = protocol.equalsIgnoreCase("http") ||
     protocol.equalsIgnoreCase("https")
+
+}
+
+object fileList {
+
+  def getFileList: java.util.List[String] = {
+
+     Files.walk(Paths.get("/swissbib_index/solrDocumentProcessing/FrequentInitialPreProcessing/data/format")).
+      filter(Files.isRegularFile(_)).map[String](_.toString).collect(Collectors.toList[String])
+
+  }
+
+  def getStream(fileName: String) : InputStream = {
+    val infile = new File(fileName)
+
+    val nameInFile: String =  infile.getAbsoluteFile.getName
+    val zipped = if (nameInFile.matches(""".*?.gz$""")) true else false
+    val  source: InputStream = if (zipped) {
+      new GZIPInputStream(new FileInputStream(infile))
+    } else {
+      new FileInputStream(infile)
+    }
+
+    source
+  }
+
+}
+
+
+object sourceParser extends Transformators
+          with MarcXMLHandlersFeatures {
+
+
+  def parseSource(stream: InputStream): Unit = {
+
+    val it = Source.fromInputStream(stream).getLines()
+    for (line <- it if isRecord(line)) {
+      val elem = parseRecord(line)
+      val urls =   (getRField(elem)("856").map(getRSubfieldContent(_)("u")) ++
+        (getRField(elem)("956").map(getRSubfieldContent(_)("u")))).flatten.
+        map(_.text)
+      if (urls.nonEmpty) {
+        println(urls)
+      }
+
+
+
+
+    }
+
+
+  }
 
 }
 
