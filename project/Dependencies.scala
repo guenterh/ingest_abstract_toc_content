@@ -65,6 +65,8 @@ object Dependencies {
 
   lazy val minitest = "io.monix" %% "minitest" % "2.8.2" % Test
 
+  lazy val snake_yaml = "org.yaml" % "snakeyaml" % "1.26"
+
 
   //lazy val argparser =  "com.github.scopt" %% "scopt" % "v3.7.1"
 

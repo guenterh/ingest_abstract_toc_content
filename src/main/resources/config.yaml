@@ -1,0 +1,12 @@
+documents:
+  allowedDocs:
+    - http://www\.ub\.unibas\.ch/tox/IDSLUZ/.*?/PDF
+      http://www\.ub\.unibas\.ch/tox/IDSBB/.*?/PDF
+      http://www\.ub\.unibas\.ch/tox/HBZ/.*?/OCR
+      http://d-nb\.info/.*?/04
+      http://aleph\.unisg\.ch/hsgscan/.*?\.pdf
+      http://opac\.nebis\.ch/objects/pdf/.*?\.pdf
+      http://biblio\.unizh\.ch/objects/pdf/.*?\.pdf
+      http://libraries\.admin\.ch/gw/toc/pdf/.*?\.pdf
+      https://www.edubs.ch/unterstuetzung/buecher/.*?\.pdf
+      https://www.edubs.ch/unterstuetzung/bibliothek/.*?\.pdf

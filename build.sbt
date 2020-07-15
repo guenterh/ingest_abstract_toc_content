@@ -32,7 +32,8 @@ lazy val root = (project in file("."))
       marc_xml_fields,
       scala_test,
       scala_mock,
-      minitest
+      minitest,
+      snake_yaml
       //argparser
       )
   )
