@@ -67,6 +67,11 @@ object Dependencies {
 
   lazy val snake_yaml = "org.yaml" % "snakeyaml" % "1.26"
 
+  lazy val tika = "org.apache.tika" % "tika-app" % "1.24.1"
+  //lazy val tika = "org.apache.tika" % "tika-app" % "1.19.1"
+
+  lazy val httprequests = "com.lihaoyi" %% "requests" % "0.6.5"
+
 
   //lazy val argparser =  "com.github.scopt" %% "scopt" % "v3.7.1"
 

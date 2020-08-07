@@ -1,4 +1,4 @@
-import java.io.{File, FileInputStream, InputStream}
+import java.io.{ByteArrayInputStream, File, FileInputStream, InputStream}
 import java.net.URL
 import java.nio.file.{Files, Paths}
 import java.util.Date
@@ -8,6 +8,8 @@ import java.util.zip.GZIPInputStream
 import db.ctx
 import io.getquill._
 import io.getquill.context.jdbc.JdbcContext
+import org.apache.tika.Tika
+import org.joda.time.DateTime
 import utilities.{MarcXMLHandlersFeatures, Transformators}
 
 import scala.collection.immutable
@@ -15,7 +17,7 @@ import scala.io.Source
 
 
 
-case class Content(id:Long, docid: String, content: String, url:String, date: Date)
+case class Content(id:Option[Long], docid: Option[String], content: String, url:String, date: Date)
 
 import io.getquill.{Literal, MySQLDialect}
 
@@ -63,6 +65,13 @@ object dbAccessWrapper {
     ctx.run(qu).nonEmpty
   }
 
+  def insertDoc(contentType: Content) = {
+
+    ctx.run(query[Content].insert(lift(contentType)))
+
+
+  }
+
 }
 
 class ProtocolTest (val url: String) {
@@ -75,6 +84,8 @@ class ProtocolTest (val url: String) {
 }
 
 object fileList {
+
+
 
   def getFileList: java.util.List[String] = {
 
@@ -103,6 +114,14 @@ object fileList {
 object sourceParser extends Transformators
           with MarcXMLHandlersFeatures {
 
+  private[this] val tika = {
+    val tika = new Tika()
+    tika.setMaxStringLength(30000)
+    tika
+  }
+
+
+  private val nebisRegex = "http://opac\\.nebis\\.ch/objects/pdf/.*?\\.pdf|https://opac\\.nebis\\.ch/objects/pdf/.*?\\.pdf".r
 
   def parseSource(stream: InputStream): Unit = {
 
@@ -112,18 +131,22 @@ object sourceParser extends Transformators
       val urls =   (getRField(elem)("856").map(getRSubfieldContent(_)("u")) ++
         (getRField(elem)("956").map(getRSubfieldContent(_)("u")))).flatten.
         map(_.text)
-      if (urls.nonEmpty) {
-        println(urls)
-      }
 
-
-
+      urls.filter(nebisRegex.findFirstIn(_).nonEmpty).
+        filter(!dbAccessWrapper.hasPdf(_)).foreach(fetchContent)
 
     }
-
-
   }
 
+  def fetchContent(url:String) = {
+    val requester = requests.get(url)
+    val content = tika.parseToString(new ByteArrayInputStream(requester.bytes))
+    dbAccessWrapper.insertDoc(Content(Option.empty[Long],Option.empty[String],content,url,new Date()))
+    println(DateTime.now())
+    Thread.sleep(30000)
+    println(DateTime.now())
+    println()
+  }
 }
 
 

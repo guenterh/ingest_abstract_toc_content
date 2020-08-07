@@ -33,7 +33,9 @@ lazy val root = (project in file("."))
       scala_test,
       scala_mock,
       minitest,
-      snake_yaml
+      snake_yaml,
+      tika,
+      httprequests
       //argparser
       )
   )
